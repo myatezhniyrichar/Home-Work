@@ -1,0 +1,8 @@
+C:\VSCode\15.02\15.02\bin\Debug\15.02.exe.config
+C:\VSCode\15.02\15.02\bin\Debug\15.02.exe
+C:\VSCode\15.02\15.02\bin\Debug\15.02.pdb
+C:\VSCode\15.02\15.02\obj\Debug\15.02.csproj.AssemblyReference.cache
+C:\VSCode\15.02\15.02\obj\Debug\15.02.csproj.CoreCompileInputs.cache
+C:\VSCode\15.02\15.02\obj\Debug\15.02.exe
+C:\VSCode\15.02\15.02\obj\Debug\15.02.pdb
+C:\VSCode\15.02\15.02\obj\Debug\15.02.exe.config
