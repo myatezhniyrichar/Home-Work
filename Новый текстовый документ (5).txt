@@ -1,0 +1,131 @@
+                         ┌─────────────────────────┐
+                         │      «interface»        │
+                         │      Controllable       │
+                         ├─────────────────────────┤
+                         │ + turnOn()   : void     │
+                         │ + turnOff()  : void     │
+                         │ + updateStatus() : void │
+                         └────────────▲────────────┘
+                                      │ implements
+                                      │
+┌──────────────────┐        ┌─────────┴───────────────────┐
+│      Room        │        │      «abstract»             │
+├──────────────────┤        │        SmartDevice          │
+│ - Id    : int    │        ├─────────────────────────────┤
+│ - Name  : string │◄───────│ - Id           : int        │
+│ - Type  : RoomType│ 1   * │ - Name         : string     │
+├──────────────────┤        │ - Manufacturer : string     │
+│ + ToString()     │        │ - Status       : string     │
+└──────────────────┘        │ - Room         : Room       │
+        ▲                   ├─────────────────────────────┤
+        │                   │ + setState(s)   : void     │
+        │                   │ + turnOn()      : void     │
+        │                   │ + turnOff()     : void     │
+        │                   │ + updateStatus(): void     │
+        │                   │ + getDeviceType(): string  │ ← abstract
+        │                   │ + executeCommand(c): void  │ ← abstract
+        │                   └────────────┬────────────────┘
+        │                                │
+        │              ┌─────────────────┼─────────────────┐
+        │              │                 │                 │
+        │              ▼                 ▼                 ▼
+        │   ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
+        │   │    SmartLight    │ │ SmartThermostat  │ │    SmartLock     │
+        │   ├──────────────────┤ ├──────────────────┤ ├──────────────────┤
+        │   │ - Brightness:int │ │ - CurrentTemp: d │ │ - LockStatus:str │
+        │   │   [0..100]       │ │ - TargetTemp : d │ │  ("открыт"/"закр")│
+        │   ├──────────────────┤ ├──────────────────┤ ├──────────────────┤
+        │   │ + getDeviceType()│ │ + getDeviceType()│ │ + getDeviceType()│
+        │   │ + executeCommand │ │ + executeCommand │ │ + executeCommand │
+        │   │ + updateStatus() │ │ + updateStatus() │ │ + updateStatus() │
+        │   └──────────────────┘ └──────────────────┘ └──────────────────┘
+        │
+        │                              ┌─────────────────────────┐
+        │                              │      «interface»        │
+        │                              │    AutomationAction     │
+        │                              ├─────────────────────────┤
+        │                              │ + execute() : void      │
+        │                              └────────────▲────────────┘
+        │                                           │ implements
+        │                              ┌────────────┴────────────┐
+        │                              │  DeviceCommandAction    │
+        │                              ├─────────────────────────┤
+        │                              │ - Device : SmartDevice  │
+        │                              │ - Command: string       │
+        │                              │ - Descr  : string       │
+        │                              ├─────────────────────────┤
+        │                              │ + execute() : void      │
+        │                              └─────────────────────────┘
+        │                                           ▲
+        │                                           │ *
+        │                              ┌────────────┴────────────┐
+        │                              │   AutomationScenario    │
+        │                              ├─────────────────────────┤
+        │                              │ - Id         : int      │
+        │                              │ - Name       : string   │
+        │                              │ - Trigger    : string   │
+        │                              │ - Actions    : List<…>  │
+        │                              ├─────────────────────────┤
+        │                              │ + AddAction(a) : void   │
+        │                              │ + Run()        : void   │
+        │                              └─────────────────────────┘
+
+       ┌─────────────┐
+       │ «enum»      │
+       │  RoomType   │
+       ├─────────────┤
+       │ Kitchen     │
+       │ LivingRoom  │
+       │ Bedroom     │
+       └─────────────┘
+
+
+
+
+
+
+
+
+
+
+
+  Main           evening:        action:            device:           setState /
+ (Program)   AutomationScenario DeviceCommandAction SmartDevice      Brightness
+    │                │                 │                 │                 │
+    │ evening.Run()  │                 │                 │                 │
+    │───────────────>│                 │                 │                 │
+    │                │                 │                 │                 │
+    │                │─┐ цикл по Actions│                 │                 │
+    │                │ │               │                 │                 │
+    │                │<┘               │                 │                 │
+    │                │                 │                 │                 │
+    │                │ action.execute()│                 │                 │
+    │                │────────────────>│                 │                 │
+    │                │                 │                 │                 │
+    │                │                 │ Console.WriteLine(описание)         │
+    │                │                 │─┐                                   │
+    │                │                 │<┘                                   │
+    │                │                 │                 │                 │
+    │                │                 │ device.executeCommand(cmd)          │
+    │                │                 │────────────────>│                 │
+    │                │                 │                 │                 │
+    │                │                 │                 │─┐ switch(cmd)   │
+    │                │                 │                 │<┘               │
+    │                │                 │                 │                 │
+    │  [вкл/выкл]    │                 │                 │ setState("вкл") │
+    │                │                 │                 │────────────────>│
+    │                │                 │                 │                 │
+    │                │                 │                 │<────────────────│
+    │                │                 │                 │                 │
+    │                │                 │                 │ Console.WriteLine(результат)
+    │                │                 │                 │─┐               │
+    │                │                 │                 │<┘               │
+    │                │                 │<────────────────│                 │
+    │                │<────────────────│                 │                 │
+    │                │                 │                 │                 │
+    │  (для каждого действия цикла)    │                 │                 │
+    │                │ ...             │                 │                 │
+    │                │                 │                 │                 │
+    │<───────────────│                 │                 │                 │
+    │                │                 │                 │                 │
+
